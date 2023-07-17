@@ -61,39 +61,6 @@ class TaskService extends ChangeNotifier {
     loadTaskList();
   }
 
-  Map<int, List<Task>> getTasksByCategory() {
-    Map<int, List<Task>> tasksByCategory = {};
-
-    for (Task task in taskList) {
-      if (!tasksByCategory.containsKey(task.category)) {
-        tasksByCategory[task.category] = [];
-      }
-      if (task.isDeleted == false) {
-        tasksByCategory[task.category]!.add(task);
-      }
-    }
-
-    // Create new lists for each category and copy tasks to the new lists
-    Map<int, List<Task>> categorizedTasks = {};
-    tasksByCategory.forEach((category, tasks) {
-      categorizedTasks[category] = List<Task>.from(tasks);
-    });
-
-    return categorizedTasks;
-  }
-
-  List<int> getCategories() {
-    List<int> categories = [];
-
-    for (Task task in taskList) {
-      if (!categories.contains(task.category)) {
-        categories.add(task.category);
-      }
-    }
-
-    return categories;
-  }
-
   List<Task> taskList = [
     Task(
         content: '이전 날짜1',
@@ -182,6 +149,39 @@ class TaskService extends ChangeNotifier {
         detail: '메모 메모 오늘이 아녜요'),
   ];
 
+  Map<int, List<Task>> getTasksByCategory() {
+    Map<int, List<Task>> tasksByCategory = {};
+
+    for (Task task in taskList) {
+      if (!tasksByCategory.containsKey(task.category)) {
+        tasksByCategory[task.category] = [];
+      }
+      if (task.isDeleted == false) {
+        tasksByCategory[task.category]!.add(task);
+      }
+    }
+
+    // Create new lists for each category and copy tasks to the new lists
+    Map<int, List<Task>> categorizedTasks = {};
+    tasksByCategory.forEach((category, tasks) {
+      categorizedTasks[category] = List<Task>.from(tasks);
+    });
+
+    return categorizedTasks;
+  }
+
+  List<int> getCategories() {
+    List<int> categories = [];
+
+    for (Task task in taskList) {
+      if (!categories.contains(task.category)) {
+        categories.add(task.category);
+      }
+    }
+
+    return categories;
+  }
+
   createTask(
       {required String content,
       required DateTime dueDate,
@@ -239,6 +239,7 @@ class TaskService extends ChangeNotifier {
   updatePinTask({required int index}) {
     Task task = taskList[index];
     task.isPinned = !task.isPinned;
+    sortList();
     taskList = [
       ...taskList.where((element) => element.isPinned),
       ...taskList.where((element) => !element.isPinned),
@@ -261,6 +262,7 @@ class TaskService extends ChangeNotifier {
   unDeleteTask({required int index}) {
     Task task = taskList[index];
     task.isDeleted = !task.isDeleted;
+    sortList();
     taskList = [
       ...taskList.where((element) => element.isDeleted),
       ...taskList.where((element) => !element.isDeleted),
